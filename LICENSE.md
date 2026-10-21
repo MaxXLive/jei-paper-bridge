@@ -3,9 +3,6 @@ The MIT License (MIT)
 Copyright (c) 2026 MaxXLive
 Copyright (c) 2014-2015 mezz
 
-JEIPaperBridge contains code ported from Just Enough Items (https://github.com/mezz/JustEnoughItems),
-which is licensed under the MIT License with the copyright notice "Copyright (c) 2014-2015 mezz".
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
