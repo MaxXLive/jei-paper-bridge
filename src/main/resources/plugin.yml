@@ -1,0 +1,19 @@
+name: JEIPaperBridge
+version: '${version}'
+main: com.maxxlive.jeipaperbridge.JEIPaperBridge
+api-version: '${minecraftVersion}'
+description: Server-side counterpart of the Just Enough Items (JEI) mod for Paper servers
+authors: [MaxXLive]
+commands:
+  jeipaperbridge:
+    description: Manage JEIPaperBridge
+    usage: /<command> <reload|status>
+    aliases: [jeipb]
+    permission: jeipaperbridge.admin
+permissions:
+  jeipaperbridge.admin:
+    description: Use /jeipaperbridge
+    default: op
+  jeipaperbridge.cheat:
+    description: Use JEI's cheat mode (give items, set hotbar items, delete items). JEI's own checks apply as well.
+    default: op

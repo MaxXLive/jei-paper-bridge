@@ -1,0 +1,30 @@
+# JEIPaperBridge - lets unmodified JEI clients use their server-side features on a Paper server.
+
+features:
+  # Move ingredients into the open crafting table, furnace, anvil, ... with JEI's "+" button.
+  recipe-transfer: true
+  # JEI cheat mode: give items, set hotbar items, delete the item on the cursor.
+  cheat-mode: true
+  # Send the server's recipes (including datapack and plugin recipes) to Fabric clients,
+  # so JEI shows them instead of the default recipes built into the client.
+  recipe-sync: true
+
+# Who may use cheat mode, same as JEI's jei-server.ini. A player additionally needs the
+# permission "jeipaperbridge.cheat" (default: op).
+cheat-mode:
+  # Allow operators (permission level 2, like /give).
+  enable-for-op: true
+  # Allow players in creative mode.
+  enable-for-creative: true
+  # Allow players who can use the /give command.
+  enable-for-give: false
+
+recipe-transfer:
+  # Fire a Bukkit InventoryClickEvent before moving items, so protection and GUI plugins can cancel the transfer.
+  fire-inventory-click-event: true
+
+# Packets a single player may send per second, further packets are ignored.
+max-packets-per-second: 20
+
+# Log rejected packets and recipe sync details.
+debug: false
