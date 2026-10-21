@@ -1,0 +1,71 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "LICENSE.md"
+      - ".gitignore"
+      - ".gitattributes"
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# never run two releases at the same time, they would pick the same patch number
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && 'release' || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # tags and history for version + changelog
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Determine version
+        id: info
+        run: bash .github/scripts/release-info.sh "$RUNNER_TEMP/CHANGELOG.md"
+
+      - name: Build
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            version="${{ steps.info.outputs.version }}-pr.${{ github.event.number }}"
+          else
+            version="${{ steps.info.outputs.version }}"
+          fi
+          echo "Building $version"
+          ./gradlew build -PpluginVersion="$version" --no-configuration-cache
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: JEIPaperBridge
+          path: build/libs/*.jar
+          if-no-files-found: error
+
+      - name: Create release
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && steps.info.outputs.released != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.info.outputs.tag }}
+          VERSION: ${{ steps.info.outputs.version }}
+        run: |
+          cat "$RUNNER_TEMP/CHANGELOG.md"
+          gh release create "$TAG" build/libs/JEIPaperBridge-"$VERSION".jar \
+            --target "$GITHUB_SHA" \
+            --title "JEIPaperBridge $VERSION" \
+            --notes-file "$RUNNER_TEMP/CHANGELOG.md"
