@@ -1,6 +1,7 @@
 package com.maxxlive.jeipaperbridge;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -22,7 +23,7 @@ public final class JEIPaperBridgeCommand implements TabExecutor {
 		if (args.length == 0) {
 			return false;
 		}
-		switch (args[0].toLowerCase()) {
+		switch (args[0].toLowerCase(Locale.ROOT)) {
 			case "reload" -> {
 				plugin.reload();
 				sender.sendMessage("JEIPaperBridge reloaded.");
