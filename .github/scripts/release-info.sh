@@ -9,6 +9,7 @@
 #   tag        e.g. v26.3-patch-2
 #   previous   previous tag for this Minecraft version (empty for the first release)
 #   released   "true" if HEAD already carries a release tag (re-run of a finished release)
+#   relevant   "true" if there are commits worth releasing (anything but docs/ci/test/style)
 # The changelog is written to the file given as the first argument (default: CHANGELOG.md).
 set -euo pipefail
 
@@ -89,11 +90,17 @@ done < <(git log "$range" --no-merges --format=$'%h\t%s')
 	fi
 } > "$changelog_file"
 
+relevant=false
+if ((${#features[@]} + ${#fixes[@]} + ${#other[@]} > 0)); then
+	relevant=true
+fi
+
 outputs=$(printf 'version=%s
 tag=%s
 previous=%s
 released=%s
-' "$version" "$tag" "$previous" "$released")
+relevant=%s
+' "$version" "$tag" "$previous" "$released" "$relevant")
 if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
 	echo "$outputs" >> "$GITHUB_OUTPUT"
 fi
